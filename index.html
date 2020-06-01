@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Pixelart</title>
+	<style type="text/css">*{margin:0;padding:0;box-sizing: border-box;overflow:hidden;}</style>
+</head>
+<body>
+	<canvas id="game" width="400" height="300"></canvas>
+	<script type="text/javascript">
+		
+		let canvas = document.querySelector("#game");
+		let ctx = canvas.getContext("2d");
+
+		let newPos = {x:1,y:1}
+
+		let objects = {
+			player: [
+				[0,0,0,1,1,1,1,1,1,1,1,1],
+				[0,1,1,1,0,0,0,0,0,0,0,1],
+				[0,1,0,0,0,0,0,0,0,0,0,1],
+				[0,1,1,1,0,0,1,0,0,1,0,1],
+				[1,1,0,0,0,0,1,0,0,1,0,1],
+				[1,1,1,1,0,0,0,0,0,0,0,1],
+				[1,1,0,1,0,0,1,1,1,0,0,1],
+				[1,0,0,0,1,0,0,0,0,0,1,1],
+				[1,0,0,0,1,1,1,1,1,1,1,0],
+				[1,0,0,1,0,0,0,0,0,0,1,0],
+				[1,1,0,1,0,0,0,1,0,0,1,0],
+				[0,1,1,1,1,1,1,1,1,1,1,0]
+			],
+			map: [
+				[1,1,1,1,1,1,1],
+				[1,0,0,0,0,0,1],
+				[1,0,0,0,0,0,1],
+				[1,0,0,0,0,0,1],
+				[1,0,0,0,0,0,1],
+				[1,0,0,0,0,0,1],
+				[1,0,0,0,0,0,1],
+				[1,0,0,0,0,0,1],
+				[1,1,1,1,1,1,1],
+			]
+		};
+
+		window.onload = () => {
+			adjustSize();
+			this.onresize = adjustSize;
+			this.onkeydown = keyDownHandler;
+			run();
+		}
+
+		function keyDownHandler(event) {
+			switch (event.code) {
+				case "KeyW":
+					newPos.y = 1;
+					break;
+				case "KeyA":
+					newPos.x =1;
+					break;
+				case "KeyS":
+					newPos.y = objects.map.length-2;
+					break;
+				case "KeyD":
+					newPos.x = 5;
+					break;
+				default:
+					break;
+			}
+		}
+
+		function adjustSize() {
+			canvas.width = window.innerWidth;
+			canvas.height = window.innerHeight;
+		}
+
+		function run() {
+			
+			let pColor = "#FFE500AA";
+			let psize = 4;
+			let venus = "#673AB7";
+			pos = {x:5, y:7}
+			newPos = {x:5, y:7}
+			let gsX,gsY;
+
+			setInterval(()=> {
+				ctx.fillStyle = pColor;
+				ctx.fillRect(0,0,canvas.width,canvas.height);
+
+				pos = movePlayer();
+
+				drawMap(venus);
+				drawPlayer(pColor);
+
+			}, 1000/15);
+
+			function movePlayer() {
+				if (newPos != pos) {
+					pos.x += (newPos.x - pos.x)/2
+					pos.y += (newPos.y - pos.y)/2
+				}
+				return pos;
+			}
+
+			function drawMap(clr) {
+				for (var y = 0; y < objects.map.length; y++) {
+					for (var x = 0; x < objects.map[y].length; x++) {
+						ctx.fillStyle = objects.map[y][x] == 0 ? pColor :clr ;
+
+						gsX = Math.floor(canvas.width/objects.map[0].length);
+						let posX = gsX*x;
+						gsY = Math.floor(canvas.height/objects.map.length);
+						let posY = gsY*y;
+						ctx.fillRect(posX, posY, gsX, gsY);
+					}
+				}
+			}
+
+			function drawPlayer(clr) {
+				for (var y = 0; y < objects.player.length; y++) {
+					for (var x = 0; x < objects.player[y].length; x++) {
+						ctx.fillStyle = objects.player[y][x] == 0 ? "transparent" : "black" ;
+						let posX = pos.x*gsX+x*psize;
+						let posY = pos.y*gsY+y*psize;
+						ctx.fillRect(posX, posY, psize,psize)
+					}
+				}
+			}
+		}
+
+	</script>
+</body>
+</html>
